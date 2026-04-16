@@ -381,23 +381,33 @@ generate_btn = st.button("🚀  Optimize Page for This Ad", type="primary", use_
 
 # ── Advanced Settings (collapsed) ────────────────────────────────────────────
 with st.expander("Advanced Settings ⚙️"):
-    api_key_input = st.text_input(
-        "Gemini API Key",
-        value=os.environ.get("GEMINI_API_KEY", ""),
-        type="password",
-        help="Required for real AI-powered optimizations. Get a free key from Google AI Studio.",
-    )
-    st.markdown("""
-    <div class="api-info">
-        <strong>What does the Gemini API key do?</strong><br>
-        The API key connects this app to Google's Gemini AI. The AI reads your ad creative 
-        and the landing page content, then intelligently rewrites headlines, CTAs, and copy 
-        to match your ad's messaging — like having a CRO expert on demand.<br><br>
-        <strong>Without a key:</strong> The app runs in demo mode with sample changes.<br>
-        <strong>With a key:</strong> You get real, AI-generated personalizations tailored to your ad.<br><br>
-        👉 <a href="https://aistudio.google.com/apikey" target="_blank">Get a free API key here</a> (takes 30 seconds)
-    </div>
-    """, unsafe_allow_html=True)
+    # Check if key is already provided by the system (Secrets or Env)
+    env_key = os.environ.get("GEMINI_API_KEY", "")
+    secrets_key = st.secrets.get("GEMINI_API_KEY", "")
+    system_key = env_key or secrets_key
+
+    if system_key:
+        st.success("✅ **AI Engine Active**: A system-level Gemini API key has been detected and is protecting your session.")
+        st.caption("The manual input field has been disabled for your security.")
+        api_key_input = system_key
+    else:
+        api_key_input = st.text_input(
+            "Gemini API Key",
+            value="",
+            type="password",
+            help="Required for real AI-powered optimizations. Get a free key from Google AI Studio.",
+        )
+        st.markdown("""
+        <div class="api-info">
+            <strong>What does the Gemini API key do?</strong><br>
+            The API key connects this app to Google's Gemini AI. The AI reads your ad creative 
+            and the landing page content, then intelligently rewrites headlines, CTAs, and copy 
+            to match your ad's messaging.<br><br>
+            <strong>Without a key:</strong> The app runs in demo mode with sample changes.<br>
+            <strong>With a key:</strong> You get real, AI-generated personalizations tailored to your ad.<br><br>
+            👉 <a href="https://aistudio.google.com/apikey" target="_blank">Get a free API key here</a> (takes 30 seconds)
+        </div>
+        """, unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
